@@ -38,7 +38,6 @@
 	<p>
 		Read my blog post regarding <a href="http://blog.marcusnoble.co.uk/14-07-2014-conways-game-of-life/">Conway's Game of Life</a>
 	</p>
-	<p id="counter">This is not working</p>
 
 	<script type="text/javascript">
 	(function(){
@@ -194,8 +193,7 @@
 				if(neighbourCount >= 2 && neighbourCount <= 3){
 					nextIteration.push(cells[i]);
 				}
-			}
-			for(i=0; i<cells.length;i++){
+				
 				// For each cell that is alive, find its neighbours
 				neighbours = [];
 				neighbours.push({x:cells[i].x-1,y:cells[i].y-1});
@@ -224,7 +222,6 @@
 				}
 			}
 
-			$("p#counter").text("Checking " + candidates.length + " cells for new life rather than " + (boardHeight * boardWidth));
 			cells = nextIteration;
 			render();
 		}
