@@ -38,6 +38,7 @@
 	<p>
 		Read my blog post regarding <a href="http://blog.marcusnoble.co.uk/14-07-2014-conways-game-of-life/">Conway's Game of Life</a>
 	</p>
+	<p id="counter">This is not working</p>
 
 	<script type="text/javascript">
 	(function(){
@@ -173,7 +174,9 @@
 		function tick(){
 			var neighbourCount = 0;
 			var nextIteration = [];
-			var deadCell, i, j;
+			var candidates = [];
+			var neighbours = [];
+			var i, j;
 
 			// All cells are dead, lets restart
 			if(cells.length === 0){
@@ -192,14 +195,36 @@
 					nextIteration.push(cells[i]);
 				}
 			}
-			for(i=1;i<=boardHeight;i++){
-				for(j=1;j<=boardWidth;j++){
-					deadCell = {x:j,y:i};
-					if(!isAlive(deadCell) && countNeighbours(deadCell) === 3){
-						nextIteration.push(deadCell);
+			for(i=0; i<cells.length;i++){
+				// For each cell that is alive, find its neighbours
+				neighbours = [];
+				neighbours.push({x:cells[i].x-1,y:cells[i].y-1});
+				neighbours.push({x:cells[i].x-1,y:cells[i].y});
+				neighbours.push({x:cells[i].x-1,y:cells[i].y+1});
+				neighbours.push({x:cells[i].x,y:cells[i].y-1});
+				neighbours.push({x:cells[i].x,y:cells[i].y+1});
+				neighbours.push({x:cells[i].x+1,y:cells[i].y-1});
+				neighbours.push({x:cells[i].x+1,y:cells[i].y});
+				neighbours.push({x:cells[i].x+1,y:cells[i].y+1});
+				for(j=0;j<neighbours.length;j++){
+					// Keep the neighbour cells if they are dead
+					// We don't want to keep multiple copies of the neighbour cell
+					if(!isAlive(neighbours[j]) && candidates.filter(function(currentCell){
+						return (currentCell.x === neighbours[j].x && currentCell.y == neighbours[j].y);
+					}).length === 0) {
+						candidates.push(neighbours[j]);
 					}
 				}
 			}
+			// Now we have a list of dead neighbours of at least 1 live neighbour (candidates)
+			// Bring the cell to life if we find that each neighbour has 3 other live neighbouring cells
+			for(i=0; i<candidates.length;i++){
+				if(countNeighbours(candidates[i]) === 3){
+					nextIteration.push(candidates[i]);
+				}
+			}
+
+			$("p#counter").text("Checking " + candidates.length + " cells for new life rather than " + (boardHeight * boardWidth));
 			cells = nextIteration;
 			render();
 		}
